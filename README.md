@@ -162,29 +162,3 @@ ww1-rag-agent/
 ├── World_War_I.pdf       # source document (path set in the config cell)
 └── chroma_db/            # persisted vector store (created on first ingest run)
 ```
-
-## Troubleshooting
-
-**`AuthenticationError: 401 Unauthorized`** — LangChain's `ChatOpenAI`
-forces its own `Authorization: Bearer <api_key>` header on every request
-internally. If your gateway needs a different auth scheme (Arvan uses
-`apikey <key>`), setting it via `default_headers` at client construction
-does **not** work — the auto-injected `Bearer` header wins and you'll get a
-401 even though a key is present. Pass it as a per-request header instead:
-
-```python
-ChatOpenAI(
-    ...,
-    model_kwargs={"extra_headers": {"Authorization": ARVAN_API_KEY}},
-)
-```
-
-`extra_headers` is applied last by the SDK and does override the automatic
-header. This is already implemented in section 6 of the notebook.
-
-## Roadmap ideas
-- Move secrets out of the notebook (see the security notice above)
-- Add a `requirements.txt` / `pyproject.toml` pin for reproducible installs
-- Swap `HuggingFaceEmbeddings` for the maintained `langchain-huggingface` package
-- Add automated eval questions with expected citations, to catch regressions
-- Add a license (MIT, Apache-2.0, etc. — none is currently set)
